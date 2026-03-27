@@ -5,10 +5,11 @@ on:
     branches: [main]
 
 jobs:
-  release:
+  detect:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    outputs:
+      changed: ${{ steps.version.outputs.changed }}
+      tag: ${{ steps.version.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,15 +20,48 @@ jobs:
         run: |
           current=$(jq -r .version package.json)
           previous=$(git show HEAD~1:package.json 2>/dev/null | jq -r .version 2>/dev/null || echo "")
-          echo "current=v${current}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${current}" >> "$GITHUB_OUTPUT"
           if [ "$current" != "$previous" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
+  release:
+    needs: detect
+    if: needs.detect.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Create GitHub release
-        if: steps.version.outputs.changed == 'true'
-        run: gh release create "${{ steps.version.outputs.current }}" --generate-notes
+        run: gh release create "${{ needs.detect.outputs.tag }}" --generate-notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    needs: [detect, release]
+    if: needs.detect.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - run: npm install -g npm@latest
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run build
+
+      - run: npm publish --provenance
