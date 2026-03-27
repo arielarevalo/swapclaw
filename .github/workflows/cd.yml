@@ -26,6 +26,9 @@ jobs:
     needs: release-please
     if: needs.release-please.outputs.release_created == 'true'
     runs-on: ubuntu-latest
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/swapclaw
     steps:
       - uses: actions/checkout@v4
 
@@ -48,6 +51,9 @@ jobs:
     needs: release-please
     if: needs.release-please.outputs.release_created == 'true'
     runs-on: ubuntu-latest
+    environment:
+      name: github-packages
+      url: https://github.com/arielarevalo/swapclaw/packages
     steps:
       - uses: actions/checkout@v4
 
