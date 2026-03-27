@@ -24,4 +24,4 @@ jobs:
         run: bunx tsc --noEmit
 
       - name: Test
-        run: bun test -- --exclude '**/e2e_*.test.ts'
+        run: bun test
