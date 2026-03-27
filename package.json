@@ -1,13 +1,16 @@
 {
 	"name": "swapclaw",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "Container-isolated agent runtime over the Agent Client Protocol (ACP)",
 	"type": "module",
 	"main": "dist/index.js",
 	"bin": {
 		"swapclaw": "dist/index.js"
 	},
-	"files": ["dist", "templates"],
+	"files": [
+		"dist",
+		"templates"
+	],
 	"scripts": {
 		"build": "tsc",
 		"start": "bun run src/index.ts",
@@ -17,7 +20,14 @@
 		"lint:fix": "biome check --write .",
 		"format": "biome format --write ."
 	},
-	"keywords": ["acp", "agent", "container", "sandbox", "runtime", "docker"],
+	"keywords": [
+		"acp",
+		"agent",
+		"container",
+		"sandbox",
+		"runtime",
+		"docker"
+	],
 	"author": "arielarevalo",
 	"repository": {
 		"type": "git",
