@@ -1,0 +1,50 @@
+name: Bug Report
+description: Report a bug
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      placeholder: A clear description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `swapclaw` with ...
+        2. Send prompt ...
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: What you expected to happen.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: swapclaw version
+      placeholder: "0.1.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: Container runtime
+      options:
+        - Docker
+        - Apple Containers
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Any relevant log output (stderr).
+      render: text
