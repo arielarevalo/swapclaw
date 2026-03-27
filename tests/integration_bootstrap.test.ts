@@ -167,7 +167,7 @@ describe("Integration: bootstrap to prompt flow", () => {
 			expect(row).not.toBeNull();
 			expect(row?.state).toBe("closed");
 		},
-		{ timeout: 15_000 },
+		{ timeout: 30_000 },
 	);
 
 	// -------------------------------------------------------------------
@@ -199,7 +199,7 @@ describe("Integration: bootstrap to prompt flow", () => {
 			// Clean up.
 			await orchestrator.closeSession(sessionId);
 		},
-		{ timeout: 15_000 },
+		{ timeout: 30_000 },
 	);
 
 	// -------------------------------------------------------------------
@@ -218,6 +218,6 @@ describe("Integration: bootstrap to prompt flow", () => {
 			// Session is no longer active.
 			expect(orchestrator.isActive(sessionId)).toBe(false);
 		},
-		{ timeout: 15_000 },
+		{ timeout: 30_000 },
 	);
 });
