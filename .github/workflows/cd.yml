@@ -4,49 +4,27 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
 jobs:
-  detect:
+  release-please:
     runs-on: ubuntu-latest
     outputs:
-      needed: ${{ steps.check.outputs.needed }}
-      tag: ${{ steps.check.outputs.tag }}
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: googleapis/release-please-action@v4
+        id: release
         with:
-          fetch-tags: true
-
-      - name: Check if release needed
-        id: check
-        run: |
-          tag="v$(jq -r .version package.json)"
-          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-          if git rev-parse "refs/tags/${tag}" > /dev/null 2>&1; then
-            echo "needed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "needed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-  release:
-    needs: detect
-    if: needs.detect.outputs.needed == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Create GitHub release
-        run: gh release create "${{ needs.detect.outputs.tag }}" --generate-notes
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
-    needs: [detect, release]
-    if: needs.detect.outputs.needed == 'true'
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
     steps:
       - uses: actions/checkout@v4
 
