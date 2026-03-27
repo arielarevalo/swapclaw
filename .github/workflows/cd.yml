@@ -8,28 +8,27 @@ jobs:
   detect:
     runs-on: ubuntu-latest
     outputs:
-      changed: ${{ steps.version.outputs.changed }}
-      tag: ${{ steps.version.outputs.tag }}
+      needed: ${{ steps.check.outputs.needed }}
+      tag: ${{ steps.check.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-tags: true
 
-      - name: Detect version change
-        id: version
+      - name: Check if release needed
+        id: check
         run: |
-          current=$(jq -r .version package.json)
-          previous=$(git show HEAD~1:package.json 2>/dev/null | jq -r .version 2>/dev/null || echo "")
-          echo "tag=v${current}" >> "$GITHUB_OUTPUT"
-          if [ "$current" != "$previous" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+          tag="v$(jq -r .version package.json)"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          if git rev-parse "refs/tags/${tag}" > /dev/null 2>&1; then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
           else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "needed=true" >> "$GITHUB_OUTPUT"
           fi
 
   release:
     needs: detect
-    if: needs.detect.outputs.changed == 'true'
+    if: needs.detect.outputs.needed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -43,7 +42,7 @@ jobs:
 
   publish:
     needs: [detect, release]
-    if: needs.detect.outputs.changed == 'true'
+    if: needs.detect.outputs.needed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
