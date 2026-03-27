@@ -45,6 +45,7 @@ function createMockOrchestrator(): SessionOrchestrator {
 		isActive: vi.fn((_sessionId: string) => true),
 		getMode: vi.fn(() => "code"),
 		setMode: vi.fn(),
+		cancel: vi.fn(async (_sessionId: string) => {}),
 	} as unknown as SessionOrchestrator;
 }
 
@@ -311,10 +312,9 @@ describe("SwapClawAgent", () => {
 	// ── cancel() ────────────────────────────────────────────────────
 
 	describe("cancel()", () => {
-		it("is a no-op (does not throw)", async () => {
-			await expect(
-				agent.cancel({ sessionId: "sess-abc123" } as acp.CancelNotification),
-			).resolves.toBeUndefined();
+		it("delegates to orchestrator.cancel()", async () => {
+			await agent.cancel({ sessionId: "sess-abc123" } as acp.CancelNotification);
+			expect(orchestrator.cancel).toHaveBeenCalledWith("sess-abc123");
 		});
 	});
 

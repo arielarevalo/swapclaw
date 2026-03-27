@@ -112,8 +112,8 @@ export class SwapClawAgent implements acp.Agent {
 
 	// ── Cancellation ──────────────────────────────────────────────────
 
-	async cancel(_params: acp.CancelNotification): Promise<void> {
-		// No-op: orchestrator doesn't expose cancel yet.
+	async cancel(params: acp.CancelNotification): Promise<void> {
+		await this.orchestrator.cancel(params.sessionId);
 	}
 
 	// ── Extensions ───────────────────────────────────────────────────

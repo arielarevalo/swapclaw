@@ -106,6 +106,9 @@ export class AgentProcessManager {
 		});
 
 		// 5. Create agent session.
+		// NOTE: mcpServers must always be passed (even if empty) for
+		// compatibility with agents that require it (e.g. opensage-acp).
+		// See: https://github.com/arielarevalo/swapclaw/issues/3
 		const agentSession = await connection.newSession({
 			cwd,
 			mcpServers: [],
