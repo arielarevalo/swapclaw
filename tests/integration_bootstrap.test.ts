@@ -91,7 +91,7 @@ describe("Integration: bootstrap to prompt flow", () => {
 			sessionsDir,
 			dbPath: path.join(dataDir, "swapclaw.db"),
 			agentCommand: "bun",
-			agentArgs: ["run", "spikes/mock-test-agent.ts"],
+			agentArgs: ["run", "tests/_mock_agent.ts"],
 		};
 
 		// Real in-memory DB.

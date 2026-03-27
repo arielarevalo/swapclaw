@@ -50,7 +50,7 @@ async function run(): Promise<TestResult> {
 		maxConcurrent: 3,
 		timezone: "UTC",
 		agentCommand: "bun",
-		agentArgs: ["run", "spikes/mock-test-agent.ts"],
+		agentArgs: ["run", "tests/_mock_agent.ts"],
 	});
 
 	// 4. Create DB (real file-based).
