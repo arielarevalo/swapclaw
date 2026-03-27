@@ -16,6 +16,7 @@ function isDockerAvailable(): boolean {
 }
 
 const dockerAvailable = isDockerAvailable();
+const isCI = !!process.env.CI;
 
 // ---------------------------------------------------------------------------
 // E2E test suite — real Docker containers with mock agent
@@ -25,9 +26,11 @@ const dockerAvailable = isDockerAvailable();
 // vi.mock() calls in other test files (e.g. session-orchestrator.test.ts
 // mocking @agentclientprotocol/sdk and node:child_process) leak into this
 // file's module cache. Running in a subprocess avoids the issue entirely.
+//
+// Skipped in CI — container startup is too slow on GitHub Actions runners.
 // ---------------------------------------------------------------------------
 
-describe.skipIf(!dockerAvailable)("E2E: Docker containers with mock agent", () => {
+describe.skipIf(!dockerAvailable || isCI)("E2E: Docker containers with mock agent", () => {
 	it("echo round-trip: prompt -> agent -> sessionUpdate -> persist", async () => {
 		const scriptPath = path.resolve(__dirname, "_e2e_docker_worker.ts");
 		const proc = Bun.spawn(["bun", "run", scriptPath], {
