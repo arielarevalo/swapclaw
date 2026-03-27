@@ -1,0 +1,22 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+
+# Claude Code
+.claude/
+
+# Internal development
+PLAN.md
+CHANGELOG.md
+spikes/
+
+# Coverage
+coverage/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
