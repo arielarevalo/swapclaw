@@ -211,6 +211,20 @@ export class SessionOrchestrator {
 		await Promise.all(sessionIds.map((id) => this.closeSession(id)));
 	}
 
+	// ── Cancellation ─────────────────────────────────────────────────
+
+	/**
+	 * Forward a cancel notification to the inner agent.
+	 */
+	async cancel(sessionId: string): Promise<void> {
+		const active = this.activeSessions.get(sessionId);
+		if (active) {
+			await active.connection.cancel({
+				sessionId: active.agentSessionId,
+			});
+		}
+	}
+
 	// ── Helpers ─────────────────────────────────────────────────────
 
 	/** Check whether a session is active (has a live connection). */
